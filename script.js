@@ -176,6 +176,7 @@ contactForm.addEventListener('submit', function(e) {
     
     const name = document.getElementById('name').value.trim();
     const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
     const subject = document.getElementById('subject').value.trim();
     const message = document.getElementById('message').value.trim();
     
@@ -198,6 +199,9 @@ contactForm.addEventListener('submit', function(e) {
     }
     
     if (isValid) {
+        // Save message to localStorage
+        saveMessage({ name, email, phone, subject, message });
+        
         // Show success message
         showNotification('Message sent successfully! I will get back to you soon.', 'success');
         
@@ -207,6 +211,19 @@ contactForm.addEventListener('submit', function(e) {
         showNotification(errorMessage, 'error');
     }
 });
+
+// Save message to localStorage
+function saveMessage(data) {
+    const messages = JSON.parse(localStorage.getItem('portfolio_messages') || '[]');
+    const newMessage = {
+        id: Date.now(),
+        ...data,
+        timestamp: new Date().toISOString(),
+        read: false
+    };
+    messages.unshift(newMessage); // Add to beginning of array
+    localStorage.setItem('portfolio_messages', JSON.stringify(messages));
+}
 
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
